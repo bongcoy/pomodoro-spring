@@ -1,5 +1,6 @@
 package com.example.pomodoro.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ public class TaskNativeService {
     private TaskNativeRepository taskNativeRepository;
 
     public TaskModel create(TaskModel task) {
-        return taskNativeRepository.create(task.getTitle(), task.getIsCompleted());
+        task.setCreatedOn(LocalDateTime.now());
+        taskNativeRepository.create(task.getTitle(), task.getIsCompleted(), task.getCreatedOn());
+        return task;
     }
 
     public List<TaskModel> findAll() {
@@ -22,14 +25,16 @@ public class TaskNativeService {
     }
 
     public TaskModel findById(Long id) {
-        return taskNativeRepository.findByIdNative(id);
+        return taskNativeRepository.findByIdNative(id).orElseThrow(() -> new RuntimeException("Task not found"));
     }
 
     public TaskModel update(Long id, TaskModel taskDetails) {
         TaskModel task = findById(id);
         task.setTitle(taskDetails.getTitle());
         task.setIsCompleted(taskDetails.getIsCompleted());
-        return taskNativeRepository.update(task.getId(), task.getTitle(), task.getIsCompleted());
+        task.setModifiedOn(LocalDateTime.now());
+        taskNativeRepository.update(task.getId(), task.getTitle(), task.getIsCompleted(), task.getModifiedOn());
+        return task;
     }
 
     public void delete(Long id) {

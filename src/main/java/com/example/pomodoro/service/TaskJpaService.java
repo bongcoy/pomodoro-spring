@@ -1,5 +1,6 @@
 package com.example.pomodoro.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ public class TaskJpaService {
     private TaskJpaRepository taskJpaRepository;
 
     public TaskModel create(TaskModel todo) {
+        todo.setCreatedOn(LocalDateTime.now());
         return taskJpaRepository.save(todo);
     }
 
@@ -30,6 +32,7 @@ public class TaskJpaService {
         TaskModel todo = findById(id);
         todo.setTitle(todoDetails.getTitle());
         todo.setIsCompleted(todoDetails.getIsCompleted());
+        todo.setModifiedOn(LocalDateTime.now());
         return taskJpaRepository.save(todo);
     }
 
